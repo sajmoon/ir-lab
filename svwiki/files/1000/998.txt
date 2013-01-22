@@ -1,0 +1,1 @@
+'''Kodord''' är en vanlig metod för att dölja vad någonting man diskuterar om egentligen handlar om. Metoden går ut på att byta ut ett känsligt ord mot ett annat. En [[u-båt]] kan kallas fisk, ett flygplan för fågel och så vidare. Kodord kan också användas som [[lösenord]]. ==Se även==*[[Eufemism]][[Kategori:Kryptologi]][[en:Code word]][[fa:کلمه کد]][[ko:부호 워드]]

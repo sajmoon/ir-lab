@@ -1,0 +1,1 @@
+'''HCI''' kan stå för:* ''Host Controller Interface'', se [[Bluetoothprotokollstack]].* ''Human Computer Interaction'', se [[människa-datorinteraktion]].==Se även==*[[Väteklorid]] och [[saltsyra]], som betecknas HCl (med gement L efter HC){{trebokstavsförgrening}}[[de:HCI]][[en:HCI]][[fr:HCI]][[ko:HCI]][[it:HCI]][[ru:HCI]][[zh:HCI]]

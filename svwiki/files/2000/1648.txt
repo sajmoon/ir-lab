@@ -1,0 +1,1 @@
+'''Sprinter''' är en [[klon]] av [[ZX Spectrum]] som tillverkas av [[Peters Plus Ltd]] i [[St Petersburg]]. Den är byggd på vad man kallar flexarkitektur vilket gör den väldigt programmerbar. Den kör även [[operativsystem]]et [[Estex]].{{Sinclairhårdvara}}[[Kategori:Hemdatorer]][[cs:Sprinter (po�?íta�?)]][[en:Sprinter (computer)]][[es:Sprinter (computadora)]]
