@@ -58,8 +58,10 @@ public class SearchGUI extends JFrame {
     Object indexLock = new Object();
 
     /**  Directory from which the code is compiled and run. */
-    public static final String homeDir = "/misc/info/DD2476/ir13/lab";
-
+    /* on csc Compuers */
+    // public static final String homeDir = "/misc/info/DD2476/ir13/lab";
+    /* On laptop. */
+    public static final String homeDir = "~/Code/ir/";
 
     /*
      *   The nice logotype
