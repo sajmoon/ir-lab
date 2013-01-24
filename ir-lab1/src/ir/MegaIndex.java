@@ -118,7 +118,6 @@ public class MegaIndex implements Index {
     }
 
 
-
     /**
      *  Returns the dictionary (the set of terms in the index)
      *  as a HashSet.

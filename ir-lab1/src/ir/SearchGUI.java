@@ -61,7 +61,7 @@ public class SearchGUI extends JFrame {
     /* on csc Compuers */
     // public static final String homeDir = "/misc/info/DD2476/ir13/lab";
     /* On laptop. */
-    public static final String homeDir = "~/Code/ir/";
+    public static final String homeDir = "/home/sten/Code/ir/";
 
     /*
      *   The nice logotype
@@ -329,14 +329,16 @@ public class SearchGUI extends JFrame {
      *   corrupt the index).
      */
     private void index() {
-	synchronized ( indexLock ) {
-	    resultWindow.setText( "\n  Indexing, please wait..." );
-	    for ( int i=0; i<dirNames.size(); i++ ) {
-		File dokDir = new File( dirNames.get( i ));
-		indexer.processFiles( dokDir );
-	    }
-	    resultWindow.setText( "\n  Done!" );
-	}
+    	synchronized ( indexLock ) {
+    		resultWindow.setText( "\n  Indexing, please wait..." );
+    		System.out.println("\n Indexing, please wait..\n");
+    		for ( int i=0; i<dirNames.size(); i++ ) {
+    			File dokDir = new File( dirNames.get( i ));
+    			indexer.processFiles( dokDir );
+    		}
+    		resultWindow.setText( "\n  Done!" );
+       		System.out.println("\n Done!");
+    	}
     };
 
 
@@ -347,46 +349,48 @@ public class SearchGUI extends JFrame {
      *   Decodes the command line arguments.
      */
     private void decodeArgs( String[] args ) {
-	int i=0, j=0;
-	while ( i < args.length ) {
-	    if ( "-i".equals( args[i] )) {
-		i++;
-		if ( j++ >= MAX_NUMBER_OF_INDEX_FILES ) {
-		    System.err.println( "Too many index files specified" );
-		    break;
-		}
-		if ( i < args.length ) {
-		    indexFiles.add( args[i++] );
-		}
-	    } 
-	    else if ( "-d".equals( args[i] )) {
-		i++;
-		if ( i < args.length ) {
-		    dirNames.add( args[i++] );
-		}
-	    }
-	    else if ( "-m".equals( args[i] )) {
-		i++;
-		indexType = Index.MEGA_INDEX;
-	    }
-	    else {
-		System.err.println( "Unknown option: " + args[i] );
-		break;
-	    }
-	}
-	//  It might take a long time to create a MegaIndex. Meanwhile no searches
-	//  should be carried out (it would result in a NullPointerException).
-	//  Therefore the access to the index must be synchronized.
-	synchronized ( indexLock ) {
-	    if ( indexType == Index.HASHED_INDEX ) {
-		indexer = new Indexer();
-	    }
-	    else {
-		resultWindow.setText( "\n  Creating MegaIndex, please wait... " );
-		indexer = new Indexer( indexFiles );
-		resultWindow.setText( "\n  Done!" );
-	    }
-	}
+    	int i=0, j=0;
+    	while ( i < args.length ) {
+    		if ( "-i".equals( args[i] )) {
+    			i++;
+    			if ( j++ >= MAX_NUMBER_OF_INDEX_FILES ) {
+    				System.err.println( "Too many index files specified" );
+    				break;
+    			}
+    			if ( i < args.length ) {
+    				indexFiles.add( args[i++] );
+    			}
+    		} 
+    		else if ( "-d".equals( args[i] )) {
+    			i++;
+    			if ( i < args.length ) {
+    				dirNames.add( args[i++] );
+    			}
+    		}
+    		else if ( "-m".equals( args[i] )) {
+    			i++;
+    			indexType = Index.MEGA_INDEX;
+    		}
+    		else {
+    			System.err.println( "Unknown option: " + args[i] );
+    			break;
+    		}
+    	}
+    	//  It might take a long time to create a MegaIndex. Meanwhile no searches
+    	//  should be carried out (it would result in a NullPointerException).
+    	//  Therefore the access to the index must be synchronized.
+    	synchronized ( indexLock ) {
+    		if ( indexType == Index.HASHED_INDEX ) {
+    			System.out.println("Creating a hashed index");
+    			indexer = new Indexer();
+    		}
+    		else {
+    			resultWindow.setText( "\n  Creating MegaIndex, please wait... " );
+    			System.out.println("Creating a MegaIndex");
+    			indexer = new Indexer( indexFiles );
+    			resultWindow.setText( "\n  Done!" );
+    		}
+    	}
     }				    
 
 
@@ -394,10 +398,10 @@ public class SearchGUI extends JFrame {
 
 
     public static void main( String[] args ) {
-	SearchGUI s = new SearchGUI();
-	s.createGUI();
-	s.decodeArgs( args );
-	s.index();
+    	SearchGUI s = new SearchGUI();
+    	s.createGUI();
+    	s.decodeArgs( args );
+    	s.index();
     }
 
 }

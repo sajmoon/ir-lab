@@ -15,6 +15,10 @@ public class PostingsEntry implements Comparable<PostingsEntry>, Serializable {
     public int docID;
     public double score;
 
+    public PostingsEntry(int inputDocID) {
+    	docID =inputDocID;
+    	score = 0;
+    }
     /**
      *  PostingsEntries are compared by their score (only relevant 
      *  in ranked retrieval).

@@ -22,13 +22,25 @@ public class PostingsList implements Serializable {
 
     /**  Number of postings in this list  */
     public int size() {
-	return list.size();
+    	return list.size();
     }
 
     /**  Returns the ith posting */
     public PostingsEntry get( int i ) {
-	return list.get( i );
+    	return list.get( i );
     }
+
+	public void addEntry(PostingsEntry entry) {
+		boolean unique = true;
+		for (PostingsEntry p : list) {
+			if (p.docID == entry.docID)
+				unique = false;
+		}
+		if (unique) {
+			list.add(entry);
+		}
+		
+	}
 
     //
     //  YOUR CODE HERE

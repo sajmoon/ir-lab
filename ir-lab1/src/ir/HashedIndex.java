@@ -11,7 +11,6 @@
 package ir;
 
 
-import java.util.LinkedList;
 import java.util.HashMap;
 
 
@@ -28,9 +27,16 @@ public class HashedIndex implements Index {
      *  Inserts this token in the index.
      */
     public void insert( String token, int docID, int offset ) {
-	//
-	//  YOUR CODE HERE
-	//
+    	PostingsList list = new PostingsList();
+    	
+    	if (index.containsKey(token)) {
+    		list = index.get(token);
+    	}
+    	PostingsEntry entry = new PostingsEntry(docID);
+    	list.addEntry(entry);
+    	if (!index.containsKey(token)) {
+    		index.put(token, list);
+    	}
     }
 
 
@@ -39,10 +45,12 @@ public class HashedIndex implements Index {
      *  if the term is not in the index.
      */
     public PostingsList getPostings( String token ) {
-	// 
-	//  REPLACE THE STATEMENT BELOW WITH YOUR CODE
-	//
-	return null;
+    	System.out.println("getPostings: '" + token + "'");
+   
+    	PostingsList list2 = new PostingsList();
+    	PostingsList list = index.get(token);
+    	
+    	return list;
     }
 
 
@@ -50,10 +58,7 @@ public class HashedIndex implements Index {
      *  Searches the index for postings matching the query.
      */
     public PostingsList search( Query query, int queryType, int rankingType ) {
-	// 
-	//  REPLACE THE STATEMENT BELOW WITH YOUR CODE
-	//
-	return null;
+    	return getPostings(query.terms.get(0));
     }
 
 
