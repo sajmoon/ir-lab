@@ -12,6 +12,7 @@ package ir;
 
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 
 /**
@@ -45,12 +46,20 @@ public class HashedIndex implements Index {
      *  if the term is not in the index.
      */
     public PostingsList getPostings( String token ) {
-    	System.out.println("getPostings: '" + token + "'");
-   
-    	PostingsList list2 = new PostingsList();
+    	HashSet<Integer> uniqueDocuments = new HashSet<Integer>();
+
+    	PostingsList returnPostings = new PostingsList();
     	PostingsList list = index.get(token);
     	
-    	return list;
+    	for (int i = 0; i < list.size(); i++) {
+    		PostingsEntry e = list.get(i);
+    		if (!uniqueDocuments.contains(e.docID) ) {
+    			uniqueDocuments.add(e.docID);
+    			returnPostings.addEntry(e);
+    		}
+    	}
+    	
+    	return returnPostings;
     }
 
 

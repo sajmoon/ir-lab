@@ -31,15 +31,7 @@ public class PostingsList implements Serializable {
     }
 
 	public void addEntry(PostingsEntry entry) {
-		boolean unique = true;
-		for (PostingsEntry p : list) {
-			if (p.docID == entry.docID)
-				unique = false;
-		}
-		if (unique) {
-			list.add(entry);
-		}
-		
+		list.add(entry);
 	}
 
     //
