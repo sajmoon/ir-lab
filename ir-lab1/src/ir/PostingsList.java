@@ -31,6 +31,14 @@ public class PostingsList implements Serializable {
     }
 
 	public void addEntry(PostingsEntry entry) {
+		int i = 0;
+		for (i = 0; i < list.size(); i++) {
+			PostingsEntry e = list.get(i);
+			if (e.docID < entry.docID) {
+				// place here to keep sorted.
+				break;
+			}
+		}
 		list.add(entry);
 	}
 

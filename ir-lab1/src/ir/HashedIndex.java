@@ -67,7 +67,54 @@ public class HashedIndex implements Index {
      *  Searches the index for postings matching the query.
      */
     public PostingsList search( Query query, int queryType, int rankingType ) {
-    	return getPostings(query.terms.get(0));
+    	PostingsList result = new PostingsList();
+    	if ( queryType == Index.INTERSECTION_QUERY) {
+    		// Intersektion Query
+    		
+    		PostingsList firstQuery = getPostings(query.terms.get(0));
+    		PostingsList secondQuery = null; 
+    		if (query.terms.size() == 1) {
+    			// No second terms, return the first result
+    			return firstQuery;
+    			
+    		} else if (query.terms.size() > 1) {
+    			// more terms in query
+    			secondQuery = getPostings(query.terms.get(2));
+    			System.out.println("term(1): " + query.terms.get(1));
+    			if (query.terms.get(1).equals("eller")) {
+    				System.out.println("Interseciton search");
+    				int i = 0;
+    				int j = 0;
+    				PostingsEntry e1 = firstQuery.get(i);
+    				PostingsEntry e2 = secondQuery.get(i);
+    				while(e1 != null && e2 != null) {
+    					try {
+	    					if (e1.docID == e2.docID) {
+	    						result.addEntry(e1);
+	    						i++;
+	    						j++;
+	    						e1 = firstQuery.get(i);
+	    						e2 = secondQuery.get(i);
+	    					} else if (e1.docID < e2.docID) {
+	    						i++;
+	    						e1 = firstQuery.get(i);
+	    					} else {
+	    						j++;
+	    						e2 = secondQuery.get(j);
+	    					}
+    					} catch (Exception e) {
+    						// TODO Exception? Fix this!
+    						System.out.println("We got an exception in HasedIndex.search for intersection search");
+    						break;
+    					}
+    				}
+    				
+    			}
+    		}
+    	} else if ( queryType == 1) {
+    		// Phrased Query
+    	}
+    	return result;
     }
 
 
