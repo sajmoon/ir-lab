@@ -77,6 +77,9 @@ public class HashedIndex implements Index {
 			}
 
 		} else if ( queryType ==  Index.PHRASE_QUERY) {
+			if (query.terms.size() == 1) {
+				return getPostings(query.terms.get(0));
+			}
 			System.out.println("Phrased Query");
 			PostingsList answer = new PostingsList();
 
