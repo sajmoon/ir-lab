@@ -1,0 +1,33 @@
+Assignment 1.4
+
+The simples query to find this out would be to google a question such as "How does google work" or something similar. However, I belive that this method would be cheating.
+
+However googeling some queries i got some result.
+
+searching for term "tv" and the first result is www.tv.nu. It includes the word so this would be list of all sites containg the word.
+
+However, google uses ranking. Pageranks are calculated in some strange way that i am not familiar with, but it depends on how many links to the site there is on the internet. Aka lots of sites think this site is good enough to link to, so its got to be good.
+
+Searching for "why is the sky blue", a complet sentance, we get a hit on that exact sentance. 
+
+Blue Sky - Why is the Sky Blue?
+www.sciencemadesimple.com/sky_blue.h... - Översätt den här sidanDelaWhy is the Sky Blue? Learn about the atmosphere and how light scattering makes the sky look blue. Plus, get great science projects to do.
+
+That could be phrased query. But not it could also be a query for sites that contains all these words.
+
+Searching for a retarded sentance "sky why blue is" i get the same hit, however including the retarded sentance in quotation marks (") i dont. That would be a exakt phrased query.
+
+Full text of "Teaching in rural schools"
+www.archive.org/stream/.../teachinginrural01woofgoog_djvu.t...Color of distant objects, hills, sky? Why blue? Is it warmer at noon or in morning? Day or night? On which side of the house is it coolest, and why? Why cooler at ...
+
+Searhcing for "my mother told me i had a chameleon soul", without quotes, the third hit is 
+
+chameleon soul | Tumblr
+www.tumblr.com/.../chameleon%20soul - Översätt den här sidan“I was always an unusual girl, my mother told me that I had a chameleon soul. Just an inner indecisiveness that was as wide as wavering as the ocean. And if I ...
+
+and that does not contain the exact phrase.
+
+
+I think google makes a combination of all types of searching algorithms and ranks pages according to there internatl score. If the whole sentance is included in the result, I hope it is gererally push to the top. Or atleast a bit up.
+
+

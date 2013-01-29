@@ -52,8 +52,6 @@ public class HashedIndex implements Index {
 		System.out.println("Searching for " + token);
 		PostingsList list = index.get(token);
 
-		System.out.println("Number of answers: " + list.size());
-
 		return list;
 	}
 
