@@ -9,16 +9,21 @@
 package ir;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PostingsEntry implements Comparable<PostingsEntry>, Serializable {
     
     public int docID;
     public double score;
+    public List<Integer> offsets;
 
     public PostingsEntry(int inputDocID) {
-    	docID =inputDocID;
+    	docID = inputDocID;
     	score = 0;
+    	offsets = new ArrayList<Integer>();
     }
+    
     /**
      *  PostingsEntries are compared by their score (only relevant 
      *  in ranked retrieval).
@@ -30,6 +35,13 @@ public class PostingsEntry implements Comparable<PostingsEntry>, Serializable {
 	return Double.compare( other.score, score );
     }
 
+    public void addOffsets(List<Integer> offsets) {
+    	this.offsets.addAll(offsets);
+    }
+    
+    public void addOffset(Integer offset) {
+    	offsets.add(offset);
+    }
     //
     //  YOUR CODE HERE
     //
