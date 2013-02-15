@@ -197,7 +197,7 @@ public class SearchGUI extends JFrame {
 				buf.append( filename );
 				}
 				if ( queryType == Index.RANKED_QUERY ) {
-				buf.append( "   " + String.format( "%.5f", results.get(i).score )); 
+					buf.append( "   " + String.format( "%.5f", results.get(i).score )); 
 				}
 				buf.append( "\n" );
 			}
@@ -336,6 +336,9 @@ public class SearchGUI extends JFrame {
     			File dokDir = new File( dirNames.get( i ));
     			indexer.processFiles( dokDir );
     		}
+    		resultWindow.setText( "\n  Updateing score!" );
+    		indexer.updateScore();
+    		
     		resultWindow.setText( "\n  Done!" );
        		System.out.println("\n Done!");
     	}

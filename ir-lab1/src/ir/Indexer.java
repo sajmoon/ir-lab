@@ -41,7 +41,7 @@ public class Indexer {
 
     /** Generates a new document identifier as an integer. */
     private int generateDocID() {
-	return lastDocID++;
+    	return lastDocID++;
     }
 
     /** Generates a new document identifier based on the file name. */
@@ -163,12 +163,16 @@ public class Indexer {
 
     /* ----------------------------------------------- */
 
-
     /**
      *  Indexes one token.
      */
     public void insertIntoIndex( int docID, String token, int offset ) {
+    	
     	index.insert( token, docID, offset );
     }
+
+	public void updateScore() {
+		index.updateScore();
+	}
 }
 	

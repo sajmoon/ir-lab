@@ -31,8 +31,10 @@ public class PostingsEntry implements Comparable<PostingsEntry>, Serializable {
      *  The comparison is defined so that entries will be put in 
      *  descending order.
      */
+    
     public int compareTo( PostingsEntry other ) {
-	return Double.compare( other.score, score );
+    	
+    	return Double.compare( other.score, score );
     }
 
     public void addOffsets(List<Integer> offsets) {
@@ -42,10 +44,7 @@ public class PostingsEntry implements Comparable<PostingsEntry>, Serializable {
     public void addOffset(Integer offset) {
     	offsets.add(offset);
     }
-    //
-    //  YOUR CODE HERE
-    //
-
+   
 }
 
     

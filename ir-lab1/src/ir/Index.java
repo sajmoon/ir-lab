@@ -36,6 +36,7 @@ public interface Index {
     public PostingsList getPostings( String token );
     public PostingsList search( Query query, int queryType, int rankingType );
     public void cleanup();
+	public void updateScore();
 
 }
 		    

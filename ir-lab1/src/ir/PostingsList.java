@@ -10,6 +10,7 @@ package ir;
 
 import java.util.LinkedList;
 import java.io.Serializable;
+import java.util.Collections;
 
 /**
  *   A list of postings for a given word.
@@ -27,6 +28,14 @@ public class PostingsList implements Serializable {
     /**  Returns the ith posting */
     public PostingsEntry get( int i ) {
     	return list.get( i );
+    }
+    
+    public PostingsEntry getDoc(int docId) {
+    	for (int i = 0; i < list.size(); i++) {
+    		if (list.get(i).docID == docId)
+    			return list.get(i);
+    	}
+    	return null;
     }
     
     public void addEntry(PostingsEntry entry) {
@@ -49,8 +58,18 @@ public class PostingsList implements Serializable {
 				}
 			}
 		}
-		
 	}
+    
+    public void updateScores() {
+    	int lsize = list.size();
+    	for (int i = 0; i < lsize; i++) {
+    		//list.get(i).updateScore(lsize);
+    	}
+    }
+    
+    public void sort() {
+    	Collections.sort(list);
+    }
 
     //
     //  YOUR CODE HERE
