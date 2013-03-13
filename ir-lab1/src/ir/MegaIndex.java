@@ -179,6 +179,13 @@ public class MegaIndex implements Index {
 	return null;
     }
 
+
+	@Override
+	public void updateScore() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
 
 

@@ -33,7 +33,7 @@ public class HashedIndex implements Index {
 	 */
 	public void insert( String token, int docID, int offset ) {
 		PostingsList list 				= new PostingsList();
-		LinkedList<String> tokenList 	= new LinkedList<String>(); 
+		LinkedList<String> tokenList 	= new LinkedList<String>();
 		
 		if (index.containsKey(token))
 			list = index.get(token);
@@ -47,7 +47,7 @@ public class HashedIndex implements Index {
 		entry.addOffset(offset);
 		list.addEntry(entry);
 		
-		/* Create a inverseIndex*/
+		/* Create a inverseIndex aka a tokenList for this doc */
 		tokenList.add(token);
 
 		if (!index.containsKey(token))
@@ -138,12 +138,12 @@ public class HashedIndex implements Index {
 			// Ranked query.
 			System.out.println("Ranked query");
 			
-			PostingsList p1 = getPostings(query.terms.get(0));
+			PostingsList p1 = unionSearch(query.terms);
 			
 			ArrayList<Vector<Double>> vectors = createVectors(p1, query.terms);
 			
-			Vector<Double> queryV = new Vector<Double>();
-			queryV.add( getTFIDFforQuery(query.terms.get(0)) );
+			Vector<Double> queryV = getTFIDFforQuery(query.terms) );	
+					
 			
 			for (int i = 0; i < vectors.size(); i++) {
 				double dotProd = cosSim(queryV, vectors.get(i));
@@ -160,27 +160,47 @@ public class HashedIndex implements Index {
 	
 
 
-	private Double getTFIDFforQuery(String token) {
-		
-		return 1.0d;
+	private Vector<Double> getTFIDFforQuery(LinkedList<String> terms) {
+		Vector<Double> v;
+//		return 1.0d;
 //		// Get total number of documents where the term is present ()
 //				int docsWithTerm = index.get(token).size();
-//				
-//				// Get the number of terms in any document
+////				
+////				// Get the number of terms in any document
 //				int termsInDoc = inverseIndex.get(docID).size();
-//				
-//				// Get the number of occurrences of a specific word in a specific doc
+////				
+////				// Get the number of occurrences of a specific word in a specific doc
 //				int tokenCountInDocument = index.get(token).getDoc(docID).offsets.size(); 
-//				
-//				// Total count of documents
+////				
+////				// Total count of documents
 //				int docCount = inverseIndex.entrySet().size();
-//				
+////				
 //				return calc_tf_idf(docsWithTerm, termsInDoc, tokenCountInDocument, docCount);
-//		
-//		return calc_tf_idf(1, terms.size(), terms.size(), 1);
+
+		for ()
+		return calc_tf_idf(1, terms.size(), terms.size(), 1);
 	}
 
-
+	public PostingsList unionSearch(List<String> terms) {
+		System.out.println("union search");
+		
+		PostingsList result = new PostingsList();
+		
+		for (int i = 0; i < terms.size(); i++) {
+			
+			PostingsList r = getPostings(terms.get(i));
+			
+			for (int j = 0; j < r.size(); j++) {
+				PostingsEntry e = r.get(j);
+				if (result.getDoc(e.docID) == null) {
+					result.addEntry(e);
+				}
+			}
+		}
+		
+		return result;
+	}
+	
 	public PostingsList intersectionSearch(List<String> terms) {
 		System.out.println("Interseciton search");
 		PostingsList result = new PostingsList();
@@ -193,7 +213,12 @@ public class HashedIndex implements Index {
 
 			int j = 0;
 			int k = 0;
-
+			if (r1 == null) {
+				return r1;
+			}
+			if (r2 == null) {
+				return r2;
+			}
 			PostingsEntry e1 = r1.get(j);
 			PostingsEntry e2 = r2.get(k);
 			while(j < r1.size() && k < r2.size()) {
@@ -213,7 +238,6 @@ public class HashedIndex implements Index {
 					}
 
 				} catch (Exception e) {
-					// TODO Exception? Fix this!
 					System.out.println("We got an exception in HasedIndex.search for intersection search");
 					e.printStackTrace();
 					break;
@@ -240,16 +264,28 @@ public class HashedIndex implements Index {
 		ArrayList<Vector<Double>> vectors = new ArrayList<Vector<Double>>();
 		
 		for( int d = 0; d < p.size(); d++) {
+			
 			// for each document.
 			int docID = p.get(d).docID;
+			
 			Vector<Double> v = new Vector<Double>();
 			
 			// för varje term i queryn så
 			// ska vectorn vara scoret för det ordet i det documentet.
 			
-			v.add(p.get(d).score);
+			for ( int q = 0; q < terms.size(); q++) {
+				// if the term in the query is in the doc
+				if (inverseIndex.get(docID).contains(terms.get(q))) {
+							System.out.println("add to vecotr: " + docID + " term: " + terms.get(q));
+					PostingsEntry e = index.get(terms.get(q)).getDoc(docID);
+					if (e == null)
+						v.add(0.0d);
+					else
+						v.add(e.score);
+				}
+			}
 			
-			vectors.add( v);
+			vectors.add(v);
 			// return a vector
 		}
 		return vectors;
