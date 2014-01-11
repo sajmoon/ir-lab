@@ -1,2 +1,7 @@
 *.class
 *~
+.idea
+*.iml
+*.ipr
+*.iws
+*.swp
