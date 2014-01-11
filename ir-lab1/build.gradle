@@ -1,0 +1,24 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.7
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compile 'org.apache.pdfbox:pdfbox:1.8.3'
+}
+
+sourceSets {
+  main {
+    java {
+      srcDirs = ["src/"]
+    }
+  }
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '1.10'
+}
