@@ -10,16 +10,11 @@
 package ir;
 
 
-import java.io.File;
-import java.io.IOException;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.StringTokenizer;
-import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.event.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.util.LinkedList;
 
 
 /**
@@ -111,69 +106,75 @@ public class SearchGUI extends JFrame {
      *   Create the GUI.
      */
     private void createGUI() {
-	// GUI definition
-	setSize( 600, 650 );
-	setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-	JPanel p = new JPanel();
-	p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-	getContentPane().add(p, BorderLayout.CENTER);
-	// Top menu
-	menuBar.add( fileMenu );
-	menuBar.add( optionsMenu );
-	menuBar.add( rankingMenu );
-	fileMenu.add( saveItem );
-	fileMenu.add( quitItem );
-	optionsMenu.add( intersectionItem );
-	optionsMenu.add( phraseItem );
-	optionsMenu.add( rankedItem );
-	rankingMenu.add( tfidfItem ); 
-	rankingMenu.add( pagerankItem ); 
-	rankingMenu.add( combinationItem ); 
-	queries.add( intersectionItem );
-	queries.add( phraseItem );
-	queries.add( rankedItem );
-	ranking.add( tfidfItem ); 
-	ranking.add( pagerankItem );
-	ranking.add( combinationItem ); 
-	intersectionItem.setSelected( true );
-	tfidfItem.setSelected( true );
-	p.add( menuBar );
-	// Logo
-	JPanel p1 = new JPanel();
-	p1.setLayout(new BoxLayout(p1, BoxLayout.X_AXIS));
-	p1.add( new JLabel( new ImageIcon( IPIC ))); 
-	p1.add( new JLabel( new ImageIcon( RPIC )));
-	p1.add( new JLabel( new ImageIcon( BLANKPIC )));
-	p1.add( new JLabel( new ImageIcon( TPIC )));
-	p1.add( new JLabel( new ImageIcon( HPIC )));
-	p1.add( new JLabel( new ImageIcon( IPIC )));
-	p1.add( new JLabel( new ImageIcon( RPIC )));
-	p1.add( new JLabel( new ImageIcon( TPIC )));
-	p1.add( new JLabel( new ImageIcon( EPIC )));
-	p1.add( new JLabel( new ImageIcon( EPIC )));
-	p1.add( new JLabel( new ImageIcon( NPIC )));
-	p.add( p1 );
-	JPanel p3 = new JPanel();
-	// Search box
-	p3.setLayout(new BoxLayout(p3, BoxLayout.X_AXIS));
-	p3.add( new JLabel( new ImageIcon( BLANKPIC )));
-	p3.add( queryWindow );
-	queryWindow.setFont( queryFont );
-	p3.add( new JLabel( new ImageIcon( BLANKPIC )));
-	p.add( p3 );
-	// Display area for search results
-	p.add( resultPane );
-	resultWindow.setFont( resultFont );
-	// Relevance feedback
-	for ( int i = 0; i<10; i++ ) {
-		feedbackBar.add( feedbackButton[i] ); 
-	}
-	feedbackBar.add( feedbackExecutor );
-	p.add( feedbackBar ); 
-	// Show the interface
-	setVisible( true );
-		
-	Action search = new AbstractAction() {
+        // GUI definition
+        setSize( 600, 650 );
+        setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+        JPanel p = new JPanel();
+        p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+        getContentPane().add(p, BorderLayout.CENTER);
+
+        // Top menu
+        menuBar.add( fileMenu );
+        menuBar.add( optionsMenu );
+        menuBar.add( rankingMenu );
+        fileMenu.add( saveItem );
+        fileMenu.add( quitItem );
+        optionsMenu.add( intersectionItem );
+        optionsMenu.add( phraseItem );
+        optionsMenu.add( rankedItem );
+        rankingMenu.add( tfidfItem );
+        rankingMenu.add( pagerankItem );
+        rankingMenu.add( combinationItem );
+        queries.add( intersectionItem );
+        queries.add( phraseItem );
+        queries.add( rankedItem );
+        ranking.add( tfidfItem );
+        ranking.add( pagerankItem );
+        ranking.add( combinationItem );
+        intersectionItem.setSelected( true );
+        tfidfItem.setSelected( true );
+        p.add( menuBar );
+
+        // Logo
+        JPanel p1 = new JPanel();
+        p1.setLayout(new BoxLayout(p1, BoxLayout.X_AXIS));
+        p1.add( new JLabel( new ImageIcon( IPIC )));
+        p1.add( new JLabel( new ImageIcon( RPIC )));
+        p1.add( new JLabel( new ImageIcon( BLANKPIC )));
+        p1.add( new JLabel( new ImageIcon( TPIC )));
+        p1.add( new JLabel( new ImageIcon( HPIC )));
+        p1.add( new JLabel( new ImageIcon( IPIC )));
+        p1.add( new JLabel( new ImageIcon( RPIC )));
+        p1.add( new JLabel( new ImageIcon( TPIC )));
+        p1.add( new JLabel( new ImageIcon( EPIC )));
+        p1.add( new JLabel( new ImageIcon( EPIC )));
+        p1.add( new JLabel( new ImageIcon( NPIC )));
+        p.add( p1 );
+        JPanel p3 = new JPanel();
+
+        // Search box
+        p3.setLayout(new BoxLayout(p3, BoxLayout.X_AXIS));
+        p3.add( new JLabel( new ImageIcon( BLANKPIC )));
+        p3.add( queryWindow );
+        queryWindow.setFont( queryFont );
+        p3.add( new JLabel( new ImageIcon( BLANKPIC )));
+        p.add( p3 );
+
+	    // Display area for search results
+	    p.add( resultPane );
+	    resultWindow.setFont( resultFont );
+
+        // Relevance feedback
+        for ( int i = 0; i<10; i++ ) {
+            feedbackBar.add( feedbackButton[i] );
+        }
+        feedbackBar.add( feedbackExecutor );
+        p.add( feedbackBar );
+
+        // Show the interface
+        setVisible( true );
+
+    	Action search = new AbstractAction() {
 		public void actionPerformed( ActionEvent e ) {
 		    // Normalize the search string and turn it into a Query
 		    String queryString = SimpleTokenizer.normalize( queryWindow.getText() );
@@ -182,28 +183,26 @@ public class SearchGUI extends JFrame {
 		    // we don't want to search at the same time we're indexing new files
 		    // (this might corrupt the index).
 		    synchronized ( indexLock ) {
-			results = indexer.index.search( query, queryType, rankingType ); 
+			    results = indexer.index.search( query, queryType, rankingType );
 		    }
 		    StringBuffer buf = new StringBuffer();
 		    if ( results != null ) {
-			buf.append( "\nFound " + results.size() + " matching document(s)\n\n" );
-			for ( int i=0; i<results.size(); i++ ) {
-				buf.append( " " + i + ". " );
-				String filename = indexer.index.docIDs.get( "" + results.get(i).docID );
-				if ( filename == null ) {
-				buf.append( "" + results.get(i).docID );
-				}
-				else {
-				buf.append( filename );
-				}
-				if ( queryType == Index.RANKED_QUERY ) {
-					buf.append( "   " + String.format( "%.5f", results.get(i).score )); 
-				}
-				buf.append( "\n" );
-			}
-		    }
-		    else {
-			buf.append( "\nFound 0 matching document(s)\n\n" );
+		    	buf.append( "\nFound " + results.size() + " matching document(s)\n\n" );
+                for ( int i=0; i<results.size(); i++ ) {
+                    buf.append( " " + i + ". " );
+                    String filename = indexer.index.docIDs.get( "" + results.get(i).docID );
+                    if ( filename == null ) {
+                        buf.append( "" + results.get(i).docID );
+                    } else {
+                    buf.append( filename );
+                    }
+                    if ( queryType == Index.RANKED_QUERY ) {
+                        buf.append( "   " + String.format( "%.5f", results.get(i).score ));
+                    }
+                    buf.append( "\n" );
+                }
+		    } else {
+			    buf.append( "\nFound 0 matching document(s)\n\n" );
 		    }
 		    resultWindow.setText( buf.toString() );
 		    resultWindow.setCaretPosition( 0 );
