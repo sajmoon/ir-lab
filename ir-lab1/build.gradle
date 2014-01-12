@@ -1,7 +1,10 @@
 apply plugin: 'java'
 apply plugin: 'idea'
+apply plugin: 'application'
 
 sourceCompatibility = 1.7
+
+mainClassName = "ir.SearchGui"
 
 repositories {
   mavenCentral()
@@ -16,6 +19,7 @@ sourceSets {
   main {
     java {
       srcDirs = ["src/"]
+      compileClasspath += files("/home/sten/Code/ir/megamap")
     }
   }
 }
