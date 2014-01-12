@@ -14,6 +14,7 @@ import java.util.List;
 
 public class PostingsEntry implements Comparable<PostingsEntry>, Serializable {
 
+    public String token;
     public int docID;
     public double score;
     public List<Integer> offsets;
@@ -22,6 +23,13 @@ public class PostingsEntry implements Comparable<PostingsEntry>, Serializable {
         docID = inputDocID;
         score = 0;
         offsets = new ArrayList<Integer>();
+    }
+
+    public PostingsEntry(int docID, String token) {
+        this.docID = docID;
+        this.token = token;
+        this.score = 0;
+
     }
 
     /**
@@ -33,7 +41,6 @@ public class PostingsEntry implements Comparable<PostingsEntry>, Serializable {
      */
 
     public int compareTo(PostingsEntry other) {
-
         return Double.compare(other.score, score);
     }
 
@@ -43,6 +50,10 @@ public class PostingsEntry implements Comparable<PostingsEntry>, Serializable {
 
     public void addOffset(Integer offset) {
         offsets.add(offset);
+    }
+
+    public int termCounts() {
+        return offsets.size();
     }
 
 }

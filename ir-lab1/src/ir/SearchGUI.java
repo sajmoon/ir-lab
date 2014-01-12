@@ -10,11 +10,14 @@
 package ir;
 
 
+import org.apache.log4j.BasicConfigurator;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.LinkedList;
+import java.util.logging.Logger;
 
 
 /**
@@ -27,6 +30,10 @@ public class SearchGUI extends JFrame {
      */
     Indexer indexer;
 
+    /**
+     * Logger
+     */
+    static Logger logger = Logger.getLogger("ir.SearchGUI");
     /**
      * The query posed by the user, used in search() and relevanceFeedbackSearch()
      */
@@ -418,6 +425,8 @@ public class SearchGUI extends JFrame {
 
 
     public static void main(String[] args) {
+        BasicConfigurator.configure();
+
         SearchGUI s = new SearchGUI();
         s.createGUI();
         s.decodeArgs(args);

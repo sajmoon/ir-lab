@@ -66,13 +66,6 @@ public class PostingsList implements Serializable {
         }
     }
 
-    public void updateScores() {
-        int lsize = list.size();
-        for (int i = 0; i < lsize; i++) {
-            //list.get(i).updateScore(lsize);
-        }
-    }
-
     public void sort() {
         Collections.sort(list);
     }

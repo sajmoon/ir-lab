@@ -9,27 +9,30 @@
 
 package ir;
 
+import org.apache.log4j.Logger;
+
 import java.util.*;
-import java.util.Map.Entry;
 
 
 /**
  * Implements an inverted index as a Hashtable from words to PostingsLists.
  */
 public class HashedIndex implements Index {
+    Logger logger = Logger.getLogger("ir.lab.hashedindex");
 
     /**
      * The index as a hashtable.
      */
-    private HashMap<String, PostingsList> index = new HashMap<String, PostingsList>(); // token, postings
-    private HashMap<Integer, LinkedList<String>> inverseIndex = new HashMap<Integer, LinkedList<String>>(); // docID, tokens
+    private HashMap<String, PostingsList> index = new HashMap<>();                      // token, postings
+    private HashMap<Integer, HashMap<String,PostingsEntry>> inverseIndex = new HashMap<>(); // docID, tokens
 
     /**
      * Inserts this token in the index.
      */
     public void insert(String token, int docID, int offset) {
+        //logger.info("Insert " + token + ", " + docID + ", " + offset);
         PostingsList list = new PostingsList();
-        LinkedList<String> tokenList = new LinkedList<String>();
+        HashMap<String, PostingsEntry> tokenList = new HashMap<>();
 
         if (index.containsKey(token))
             list = index.get(token);
@@ -37,14 +40,14 @@ public class HashedIndex implements Index {
         if (inverseIndex.containsKey(docID))
             tokenList = inverseIndex.get(docID);
 
-		
 		/* Add this occurance of the word to the list for the document */
         PostingsEntry entry = new PostingsEntry(docID);
         entry.addOffset(offset);
         list.addEntry(entry);
 
 		/* Create a inverseIndex aka a tokenList for this doc */
-        tokenList.add(token);
+        PostingsEntry tokenEntry = new PostingsEntry(docID, token);
+        tokenList.put(token, tokenEntry);
 
         if (!index.containsKey(token))
             index.put(token, list);
@@ -135,51 +138,88 @@ public class HashedIndex implements Index {
             // Ranked query.
             System.out.println("Ranked query");
 
-            PostingsList p1 = unionSearch(query.terms);
+            PostingsList resultList = unionSearch(query.terms);
 
-            ArrayList<Vector<Double>> vectors = createVectors(p1, query.terms);
+            logger.info("Result lenght: " + resultList.size());
+            HashMap<String, Double> query_score = getQueryScore(query.terms);
 
-            // Vector<Double> queryV = getTFIDFforQuery(query.terms) );
-
-
-            for (int i = 0; i < vectors.size(); i++) {
-                //	double dotProd = cosSim(queryV, vectors.get(i));
-                //	p1.get(i).score = dotProd;
+            double euc_length_of_query = 0d;
+            for (String term : query.terms) {
+                euc_length_of_query += Math.pow(query_score.get(term), 2);
             }
 
+            euc_length_of_query = Math.sqrt(euc_length_of_query);
 
-            p1.sort();
+            logger.info("got query euclidean length: " + euc_length_of_query );
 
-            return p1;
+            for (int i = 0; i < resultList.size(); i++) {
+
+                // För varje resultat
+                double value = 0.0d;
+                int docID = resultList.get(i).docID;
+
+                for (String term : query.terms) {
+                    double tf_idf = get_tf_idf_in_document(docID, term);
+                    value += (tf_idf * query_score.get(term));
+                }
+
+                value = Math.sqrt(value);
+
+                double euc_length_of_doc = 0.0d;
+
+                Set<String> terms = inverseIndex.get(docID).keySet();
+
+                for (String term : terms) {
+                     euc_length_of_doc += Math.pow(get_tf_idf_in_document(docID, term), 2);
+                }
+
+                euc_length_of_doc = Math.sqrt(euc_length_of_doc);
+
+                double finalScore = ( value / (euc_length_of_query * euc_length_of_doc) );
+                //logger.info("final score is " + finalScore);
+                resultList.get(i).score = finalScore;
+            }
+
+            resultList.sort();
+            return resultList;
         }
         return null;
     }
 
+    private HashMap<String, Double> getQueryScore(LinkedList<String> terms) {
+        HashMap<String,Double> query_score = new HashMap<>();
 
-    //private Vector<Double> getTFIDFforQuery(LinkedList<String> terms) {
-    //	Vector<Double> v;
-//		return 1.0d;
-//		// Get total number of documents where the term is present ()
-//				int docsWithTerm = index.get(token).size();
-////				
-////				// Get the number of terms in any document
-//				int termsInDoc = inverseIndex.get(docID).size();
-////				
-////				// Get the number of occurrences of a specific word in a specific doc
-//				int tokenCountInDocument = index.get(token).getDoc(docID).offsets.size(); 
-////				
-////				// Total count of documents
-//				int docCount = inverseIndex.entrySet().size();
-////				
-//				return calc_tf_idf(docsWithTerm, termsInDoc, tokenCountInDocument, docCount);
+        for (String term : terms) {
+            // Get total number of documents where the term is present ()
+            int docsWithTerm = index.get(term).size();
 
-    //for ()
-    //return calc_tf_idf(1, terms.size(), terms.size(), 1);
+            // Get the number of terms in the query
+            int termsInDoc = terms.size();
 
-    //}
+            // Get the number of occurrences of a specific word in a specific doc
+            // antal gånger ordet finns i queryn
+            //int tokenCountInDocument = index.get(token).getDoc(docID).offsets.size();
+            int tokenCountInDocument = 1;
+
+            // Total count of documents
+            int docCount = inverseIndex.entrySet().size();
+
+            double tf_idf = calc_tf_idf(termsInDoc, docsWithTerm, tokenCountInDocument, docCount);
+            //return calc_tf_idf(docsWithTerm, termsInDoc, tokenCountInDocument, docCount);
+            query_score.put(term, tf_idf);
+        }
+
+        return query_score;
+    }
+
+    private double get_tf_idf_in_document(int docID, String term) {
+        if (!inverseIndex.get(docID).containsKey(term))
+            return 0.0d;
+        return inverseIndex.get(docID).get(term).score;
+    }
 
     public PostingsList unionSearch(List<String> terms) {
-        System.out.println("union search");
+        System.out.println("Union search");
 
         PostingsList result = new PostingsList();
 
@@ -241,7 +281,6 @@ public class HashedIndex implements Index {
                 }
             }
             r1 = result;
-
         }
 
         return result;
@@ -254,51 +293,15 @@ public class HashedIndex implements Index {
     public void cleanup() {
     }
 
-
-    private ArrayList<Vector<Double>> createVectors(PostingsList p, LinkedList<String> terms) {
-        // hashmap k = docid v = vecotr
-        ArrayList<Vector<Double>> vectors = new ArrayList<Vector<Double>>();
-
-        for (int d = 0; d < p.size(); d++) {
-
-            // for each document.
-            int docID = p.get(d).docID;
-
-            Vector<Double> v = new Vector<Double>();
-
-            // för varje term i queryn så
-            // ska vectorn vara scoret för det ordet i det documentet.
-
-            for (int q = 0; q < terms.size(); q++) {
-                // if the term in the query is in the doc
-                if (inverseIndex.get(docID).contains(terms.get(q))) {
-                    System.out.println("add to vecotr: " + docID + " term: " + terms.get(q));
-                    PostingsEntry e = index.get(terms.get(q)).getDoc(docID);
-                    if (e == null)
-                        v.add(0.0d);
-                    else
-                        v.add(e.score);
-                }
-            }
-
-            vectors.add(v);
-            // return a vector
-        }
-        return vectors;
-    }
-
     public void updateScore() {
         System.out.println("Update score..");
 
-
-        Iterator<Entry<String, PostingsList>> it = index.entrySet().iterator();
+        Iterator<Map.Entry<String, PostingsList>> it = index.entrySet().iterator();
 
         double startTime = System.currentTimeMillis();
         while (it.hasNext()) {
 
             Map.Entry<String, PostingsList> pairs = it.next();
-
-            // System.out.println("it:next => " + pairs.getKey() + " -> " + pairs.getValue().size());
 
 
             for (int i = 0; i < pairs.getValue().size(); i++) {
@@ -307,10 +310,9 @@ public class HashedIndex implements Index {
 
                 int docID = pairs.getValue().get(i).docID;
 
-
-//				System.out.println("tf-idf: " + score);
-
-                index.get(token).get(i).score = getScore(token, docID);
+                double score = calculateScore(token, docID);
+                index.get(token).get(i).score = score;
+                inverseIndex.get(docID).get(token).score = score;
 
                 // set score in entry to a value. tf * idf = (3/100) * (10.000.000 / 1.000)
             }
@@ -321,7 +323,7 @@ public class HashedIndex implements Index {
         System.out.println("updating took: " + (endTime - startTime) + "ms");
     }
 
-    private double getScore(String token, int docID) {
+    private double calculateScore(String token, int docID) {
         // Get total number of documents where the term is present ()
         int docsWithTerm = index.get(token).size();
 
@@ -335,44 +337,16 @@ public class HashedIndex implements Index {
         int docCount = inverseIndex.entrySet().size();
 
         return calc_tf_idf(docsWithTerm, termsInDoc, tokenCountInDocument, docCount);
-
     }
 
     private double calc_tf_idf(int docsWithTerm, int termsInDoc, int tokenCountInDocument, int docCount) {
-        // tf for a specific word = occurrences in doc / total number of words in that doc
-        double tf = (double) tokenCountInDocument / (double) termsInDoc;
+        // tf for a specific word = occurrences in doc
+        double tf = (double) tokenCountInDocument;// / (double) termsInDoc;
 
         // idf = count of docs / docs with term
         double idf = Math.log10((double) docCount / (double) docsWithTerm);
 
         double score = tf * idf;
         return score;
-    }
-
-    private double cosSim(Vector<Double> v1, Vector<Double> v2) {
-        double d = dotProduct(v1, v2);
-        double e1 = euclidianLength(v1);
-        double e2 = euclidianLength(v1);
-        return d / (Math.abs(e1) * Math.abs(e2));
-
-    }
-
-    private double euclidianLength(Vector<Double> v) {
-        double sum = 0.0d;
-        for (int i = 0; i < v.size(); i++) {
-            sum += Math.pow(v.get(i), 2);
-        }
-        return sum;
-    }
-
-    private Double dotProduct(Vector<Double> v1, Vector<Double> v2) {
-        if (v1.size() != v2.size())
-            return 0.0d; // om de har fel dimensioner
-
-        Double sum = 0.0d;
-        for (int i = 0; i < v1.size(); i++)
-            sum += v1.get(i) * v2.get(i);
-
-        return sum;
     }
 }
