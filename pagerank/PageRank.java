@@ -151,19 +151,149 @@ public class PageRank{
 
     /* --------------------------------------------- */
 
-
+    double diffOfVector(double[] x, double[] xp, int length) {
+      double diff = 0d;
+      for (int i = 0; i < length; i++) {
+        diff += x[i] - xp[i];
+      }
+      return diff;
+    }
     /*
      *   Computes the pagerank of each document.
      */
     void computePagerank( int numberOfDocs ) {
-    //
-    //   YOUR CODE HERE
-    //
+      // set startvärdet till ett snitt
+
+      // skapa P eller G
+      double[][] P = new double[numberOfDocs][numberOfDocs];
+      // den är svingles!
+
+      // Beräkna P.
+      for (int i = 0; i < numberOfDocs; i++) {
+        double ones = calculateOnesInDoc(i, numberOfDocs);
+        for (int j = 0; j < numberOfDocs; j++) {
+          if (ones != 0) {
+            P[i][j] = ( (getFromPosition(i, j) / ones));// * (BORED) ) + ((1d-BORED)/numberOfDocs);
+            /* assert(1d-BORED > 0); */
+            /* System.out.println("[" + i + "][" + j + "]:"); */
+            /* System.out.println("P[i][j]: "+ P[i][j]); */
+            /* System.out.println("ones: "+ ones); */
+            /* System.out.println("pos: "+ getFromPosition(i,j) / ones); */
+          } else {
+            P[i][j] = 1d / numberOfDocs;
+            /* System.out.println("no ones: " + (1dgcc /numberOfDocs)); */
+          }
+          /* assert P[i][j] > 0; */
+        }
+      }
+
+      // Power iterations
+      
+      /* printMatrix(P, 10); */
+      // initial guess
+      double [] x = new double[numberOfDocs];
+      for (int xi = 0; xi < numberOfDocs; xi++) {
+        x[xi] = (1d/numberOfDocs);
+      }
+
+      System.out.println("P computed. Doing power iterations.");
+      System.out.println("");
+      int i = 0;
+      while(i < 5) {
+        /* System.out.println(x.toString()); */
+        x = matrixMultiply(x, P, numberOfDocs);
+        /* System.out.println(x); */
+        i++;
+        System.out.print(i + " ");
+      }
+
+      System.out.println("\nIterations complete");
+      /* printMatrix(P, 100); */
+      List<Score> result = new ArrayList<Score>();
+      
+      double maxSoFar = 0;
+      for (int k = 0; k < numberOfDocs; k++) {
+        
+        result.add(new Score(x[k], docName[k]));
+      }
+
+      Collections.sort(result);
+      
+      int collectionCount = 0;
+      for( Score s : result ) {
+        if (collectionCount < 50 || collectionCount > 8640)
+          System.out.println(collectionCount + ". " + s.name + " : " + s.score);
+        if (s.name.equals("669"))
+          System.out.println ("---------- " + collectionCount + " " + s.score);
+        collectionCount++;
+      }
+
     }
 
+    void printMatrix(double[][] P, int length) {
+      for( int i = 0; i < length; i++ ) {
+        System.out.print("[");
+        for (int j = 0; j < length; j++) {
+          System.out.print(P[i][j]+",");
+        }
+        System.out.println("]");
+      }
+    }
+
+    public double[] matrixMultiply(double[] x, double[][] P, int numberOfDocs) {
+      for (int i = 0; i < numberOfDocs; i++) {
+        double result = 0;
+        for (int j = 0; j < numberOfDocs; j++) {
+          /* assert(x[j]>=0); */
+          /* assert(P[i][j]>=0); */
+          result += (x[j]*P[j][i]);
+        }
+        x[i] = result;
+      }
+      return x;
+    }
+
+    public double getFromPosition(int i, int j) {
+      Hashtable<Integer, Boolean> theDocument = link.get(i);
+
+      if (theDocument == null) {
+        return 0;
+      }
+      if (theDocument.containsKey(j)) {
+        return 1;
+      }
+      return 0;
+    }
+
+    public double calculateOnesInDoc(int docID, int numOfDocs) {
+      return out[docID];
+      /* Hashtable<Integer, Boolean> theDocument = link.get(docID); */
+      /* if (theDocument == null) { return 0; } */
+      /* double result = 0d; */
+      /* for (int i = 0; i < numOfDocs; i++) { */
+      /*   if (theDocument.containsKey(i)) { */
+      /*     result++; */
+      /*   } */
+      /* } */
+      /* return result; */
+    }
+
+    private class Score implements Comparable<Score> {
+      double score;
+      String name;
+
+      public Score(double score, String name) {
+        this.score = score;
+        this.name = name;
+      }
+
+      @Override
+      public int compareTo(Score o) {
+        return score < o.score? 1 : score > o.score? -1 : 0;
+      }
+    }
 
     /* --------------------------------------------- */
-
 
     public static void main( String[] args ) {
     if ( args.length != 1 ) {
