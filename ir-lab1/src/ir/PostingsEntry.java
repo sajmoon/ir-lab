@@ -4,7 +4,7 @@
  * 
  *   First version:  Johan Boye, 2010
  *   Second version: Johan Boye, 2012
- */  
+ */
 
 package ir;
 
@@ -13,38 +13,48 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PostingsEntry implements Comparable<PostingsEntry>, Serializable {
-    
+
+    public String token;
     public int docID;
     public double score;
     public List<Integer> offsets;
 
     public PostingsEntry(int inputDocID) {
-    	docID = inputDocID;
-    	score = 0;
-    	offsets = new ArrayList<Integer>();
+        docID = inputDocID;
+        score = 0;
+        offsets = new ArrayList<Integer>();
     }
-    
+
+    public PostingsEntry(int docID, String token) {
+        this.docID = docID;
+        this.token = token;
+        this.score = 0;
+
+    }
+
     /**
-     *  PostingsEntries are compared by their score (only relevant 
-     *  in ranked retrieval).
-     *
-     *  The comparison is defined so that entries will be put in 
-     *  descending order.
+     * PostingsEntries are compared by their score (only relevant
+     * in ranked retrieval).
+     * <p/>
+     * The comparison is defined so that entries will be put in
+     * descending order.
      */
-    public int compareTo( PostingsEntry other ) {
-	return Double.compare( other.score, score );
+
+    public int compareTo(PostingsEntry other) {
+        return Double.compare(other.score, score);
     }
 
     public void addOffsets(List<Integer> offsets) {
-    	this.offsets.addAll(offsets);
+        this.offsets.addAll(offsets);
     }
-    
+
     public void addOffset(Integer offset) {
-    	offsets.add(offset);
+        offsets.add(offset);
     }
-    //
-    //  YOUR CODE HERE
-    //
+
+    public int termCounts() {
+        return offsets.size();
+    }
 
 }
 

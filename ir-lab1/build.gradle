@@ -1,0 +1,29 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'application'
+
+sourceCompatibility = 1.7
+
+mainClassName = "ir.SearchGui"
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compile 'org.apache.pdfbox:pdfbox:1.8.3'
+  compile 'log4j:log4j:1.2.17'
+}
+
+sourceSets {
+  main {
+    java {
+      srcDirs = ["src/"]
+      compileClasspath += files("/home/sten/Code/ir/megamap")
+    }
+  }
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '1.10'
+}

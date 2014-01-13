@@ -1,2 +1,8 @@
 *.class
 *~
+.idea
+*.iml
+*.ipr
+*.iws
+*.swp
+pagerank/svwiki_links
