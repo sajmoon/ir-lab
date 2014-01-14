@@ -23,8 +23,7 @@ public class HashedIndex implements Index {
     /**
      * The index as a hashtable.
      */
-    private HashMap<String, PostingsList> index = new HashMap<>();                      // token, postings
-    private HashMap<Integer, HashMap<String,PostingsEntry>> inverseIndex = new HashMap<>(); // docID, tokens
+
 
     /**
      * Inserts this token in the index.
@@ -160,7 +159,7 @@ public class HashedIndex implements Index {
 
                 for (String term : query.terms) {
                     double tf_idf = get_tf_idf_in_document(docID, term);
-                    value += (tf_idf * query_score.get(term));
+                    value += (Math.pow(tf_idf * query_score.get(term),2));
                 }
 
                 value = Math.sqrt(value);
@@ -191,6 +190,10 @@ public class HashedIndex implements Index {
 
         for (String term : terms) {
             // Get total number of documents where the term is present ()
+            if (index.get(term) == null) {
+                query_score.put(term, 0d);
+                continue;
+            }
             int docsWithTerm = index.get(term).size();
 
             // Get the number of terms in the query
@@ -227,6 +230,8 @@ public class HashedIndex implements Index {
 
             PostingsList r = getPostings(terms.get(i));
 
+            if (r == null)
+                break;
             for (int j = 0; j < r.size(); j++) {
                 PostingsEntry e = r.get(j);
                 if (result.getDoc(e.docID) == null) {

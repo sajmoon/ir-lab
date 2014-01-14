@@ -8,6 +8,7 @@
 package ir;
 
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 
@@ -60,6 +61,72 @@ public class Query {
         //
         //  YOUR CODE HERE
         //
+        double ALPHA = 0.9;
+        double BETA = 0.2;
+
+        // vi minskar vikten på de termer vi redan har.
+        for (int i = 0; i < terms.size(); i++) {
+            changeWeight(i, ALPHA);
+        }
+
+        int countOfRelevantDocuments = countRelevantDocuments(docIsRelevant);
+
+        for (int i = 0; i < docIsRelevant.length; i++) {
+            if (docIsRelevant[i]) {
+                int docID = results.get(i).docID;
+                HashMap<String, PostingsEntry> docTerms = indexer.index.inverseIndex.get(docID);
+
+                // docTerms är nu en hashMap av alla termer i det documentet.
+                // Vi borde plocka ut de viktigaste.
+                // Typ sortera på score, men kanske inte just nu.
+
+                for (String term : docTerms.keySet()) {
+                    if (terms.contains(term)) {
+                        // Ska inte ändra vikten. Right? JO! LEts do it!!
+//                        changeWeight(term, BETA);
+                        for (int j = 0; j < weights.size(); j++) {
+                            weights.set(j,weights.get(j) + (docTerms.get(term).score ) * BETA * (1/countOfRelevantDocuments));
+                        }
+                    } else {
+                        terms.add(term);
+                        weights.add( (docTerms.get(term).score ) * BETA * (1/countOfRelevantDocuments));
+                    }
+                }
+            }
+        }
+        kanDuNormalizeraQueryWeightTack();
+    }
+
+    public void kanDuNormalizeraQueryWeightTack() {
+        double totalWeight = 0d;
+        for (double w : weights) {
+            totalWeight += w;
+        }
+
+        System.out.println("total weight of query: " + totalWeight);
+
+        for (int i = 0; i < weights.size(); i++) {
+            weights.set(i, weights.get(i) / totalWeight);
+        }
+
+        totalWeight = 0d;
+        for (double w : weights) {
+            totalWeight += w;
+        }
+
+        System.out.println("Total weight after normalization: " + totalWeight);
+    }
+
+    private int countRelevantDocuments(boolean[] docs) {
+        int count = 0;
+        for (int i = 0; i < docs.length; i++) {
+            if (docs[i])
+                count++;
+        }
+        return count;
+    }
+    private void changeWeight(int termIndex, double factor) {
+        weights.set(termIndex, weights.get(termIndex)*factor);
     }
 }
 
